@@ -1,39 +1,22 @@
-import {Link} from "react-router-dom";
-import {useContext} from "react";
-import {AuthContext} from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
-function Navbar(){
+function Navbar() {
+  return (
+    <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
+      <div className="container">
+        <Link className="navbar-brand" to="/">
+          CarRental
+        </Link>
 
-const {user,logout} = useContext(AuthContext);
-
-return(
-
-<nav className="bg-black text-white flex justify-between p-4">
-
-<div className="text-xl font-bold">
-BikeRent
-</div>
-
-<div className="space-x-4">
-
-<Link to="/">Home</Link>
-<Link to="/bikes">Bikes</Link>
-
-{!user && <Link to="/login">Login</Link>}
-
-{user && (
-<>
-<Link to="/dashboard">Dashboard</Link>
-<button onClick={logout}>Logout</button>
-</>
-)}
-
-</div>
-
-</nav>
-
-);
-
+        <div className="navbar-nav ms-auto">
+          <Link className="nav-link" to="/">Home</Link>
+          <Link className="nav-link" to="/cars">Cars</Link>
+          <Link className="nav-link" to="/my-bookings">My Bookings</Link>
+          <Link className="nav-link" to="/login">Login</Link>
+        </div>
+      </div>
+    </nav>
+  );
 }
 
 export default Navbar;
