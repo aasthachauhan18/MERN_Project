@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Form, Button, Card, Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 function Register() {
@@ -28,7 +29,6 @@ function Register() {
       return;
     }
 
-    
     console.log("Register Data:", form);
 
     alert("Registered Successfully!");
@@ -36,98 +36,107 @@ function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <Container fluid className="vh-100 d-flex align-items-center justify-content-center bg-light">
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 shadow-lg rounded w-96"
-      >
+      <Row>
+        <Col>
+          <Card style={{ width: "400px" }} className="shadow p-3">
 
-        <h2 className="text-2xl mb-4 text-center">
-          Register
-        </h2>
+            <Card.Body>
+              <h3 className="text-center mb-4">Register</h3>
 
-        {/* Name */}
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          className="w-full border p-2 mb-3"
-          onChange={handleChange}
-          required
-        />
+              <Form onSubmit={handleSubmit}>
 
-        {/* Email */}
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          className="w-full border p-2 mb-3"
-          onChange={handleChange}
-          required
-        />
+                {/* Name */}
+                <Form.Group className="mb-3">
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    placeholder="Full Name"
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
 
-        {/* Phone */}
-        <input
-          type="text"
-          name="phone"
-          placeholder="Phone"
-          className="w-full border p-2 mb-3"
-          onChange={handleChange}
-        />
+                {/* Email */}
+                <Form.Group className="mb-3">
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
 
-        {/* Password */}
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          className="w-full border p-2 mb-3"
-          onChange={handleChange}
-          required
-        />
+                {/* Phone */}
+                <Form.Group className="mb-3">
+                  <Form.Control
+                    type="text"
+                    name="phone"
+                    placeholder="Phone"
+                    onChange={handleChange}
+                  />
+                </Form.Group>
 
-        {/* Confirm Password */}
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          className="w-full border p-2 mb-3"
-          onChange={handleChange}
-          required
-        />
+                {/* Password */}
+                <Form.Group className="mb-3">
+                  <Form.Control
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
 
-        {/* Role */}
-        <select
-          name="role"
-          className="w-full border p-2 mb-4"
-          onChange={handleChange}
-        >
-          <option value="student">Student</option>
-          <option value="counselor">Counselor</option>
-          <option value="admin">Admin</option>
-        </select>
+                {/* Confirm Password */}
+                <Form.Group className="mb-3">
+                  <Form.Control
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
 
-        {/* Button */}
-        <button
-          type="submit"
-          className="bg-blue-500 text-white w-full p-2 rounded"
-        >
-          Register
-        </button>
+                {/* Role */}
+                <Form.Group className="mb-3">
+                  <Form.Select
+                    name="role"
+                    onChange={handleChange}
+                  >
+                    <option value="student">Student</option>
+                    <option value="counselor">Counselor</option>
+                    <option value="admin">Admin</option>
+                  </Form.Select>
+                </Form.Group>
 
-        {/* Login Link */}
-        <p className="text-center mt-3">
-          Already have an account?{" "}
-          <span
-            className="text-blue-500 cursor-pointer"
-            onClick={() => navigate("/login")}
-          >
-            Login
-          </span>
-        </p>
+                {/* Button */}
+                <Button variant="primary" type="submit" className="w-100">
+                  Register
+                </Button>
 
-      </form>
-    </div>
+                {/* Footer */}
+                <div className="text-center mt-3">
+                  Already have an account?{" "}
+                  <span
+                    style={{ color: "blue", cursor: "pointer" }}
+                    onClick={() => navigate("/login")}
+                  >
+                    Login
+                  </span>
+                </div>
+
+              </Form>
+            </Card.Body>
+
+          </Card>
+        </Col>
+      </Row>
+
+    </Container>
   );
 }
 
