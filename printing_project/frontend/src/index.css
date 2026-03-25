@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Page */
+body {
+  @apply bg-slate-100 font-sans;
+}
+
+/* Card */
+.card {
+  @apply bg-white p-8 rounded-xl shadow-md w-96;
+}
+
+/* Input group */
+.input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+/* Input */
+.input-field {
+  width: 100%;
+  padding: 14px 12px;
+  border: 1px solid #cbd5f5;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+}
+
+/* Focus */
+.input-field:focus {
+  border-color: #2563eb;
+}
+
+/* Label */
+.input-label {
+  position: absolute;
+  left: 12px;
+  top: 14px;
+  font-size: 14px;
+  color: #64748b;
+  transition: 0.2s;
+  background: white;
+  padding: 0 4px;
+}
+
+/* Floating effect */
+.input-field:focus + .input-label,
+.input-field:not(:placeholder-shown) + .input-label {
+  top: -8px;
+  font-size: 12px;
+  color: #2563eb;
+}
+
+/* Error */
+.error {
+  color: red;
+  font-size: 12px;
+}
+
+/* Button */
+.btn {
+  width: 100%;
+  background: #2563eb;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: #1d4ed8;
+}
+
+.btn:disabled {
+  background: gray;
+}

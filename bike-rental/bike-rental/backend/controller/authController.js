@@ -1,14 +1,21 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import User from "../model/User.js";
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "1d",
-  });
+// ✅ INCLUDE ROLE IN TOKEN
+const generateToken = (user) => {
+  return jwt.sign(
+    {
+      id: user._id,
+      role: user.role, // 🔥 IMPORTANT
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "1d" }
+  );
 };
 
-export const register = async (req, res) => {
+// ✅ REGISTER
+exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -22,19 +29,19 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+    // ❌ DO NOT HASH HERE (model will do it)
     const user = await User.create({
       name,
       email,
-      password: hashedPassword,
+      password,
     });
 
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id),
+      role: user.role, // ✅ send role
+      token: generateToken(user),
     });
 
   } catch (error) {
@@ -43,7 +50,8 @@ export const register = async (req, res) => {
   }
 };
 
-export const login = async (req, res) => {
+// ✅ LOGIN
+exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -67,7 +75,8 @@ export const login = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user._id),
+      role: user.role, // ✅ send role
+      token: generateToken(user),
     });
 
   } catch (error) {
@@ -76,12 +85,13 @@ export const login = async (req, res) => {
   }
 };
 
-export const getUsers = async (req, res) => {
+// ✅ GET USERS (ADMIN)
+exports.getUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
     res.status(200).json(users);
   } catch (error) {
-    console.log(error); // 👈 ADD THIS
+    console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 };

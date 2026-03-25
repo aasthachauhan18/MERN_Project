@@ -1,6 +1,8 @@
 const router = require("express").Router();
+const auth = require("../middleware/authMiddleware");
 const { pay } = require("../controllers/paymentController");
 
-router.post("/", pay);
+// ✅ Payment API
+router.post("/", auth, pay);
 
 module.exports = router;
