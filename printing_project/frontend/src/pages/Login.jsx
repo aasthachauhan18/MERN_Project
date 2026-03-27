@@ -1,8 +1,12 @@
-import { useState } from "react";
-import API from "../api/api";
-import { useNavigate, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../features/auth/authSlice";
+import { useLocation, useNavigate } from "react-router-dom";
 
-export default function Login() {
+const Login = () => {
+  const location = useLocation();
+  const { user, loading, error } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -12,82 +16,141 @@ export default function Login() {
 
   const [errors, setErrors] = useState({});
 
- 
   const validate = () => {
     let err = {};
 
-    if (!form.email) {
-      err.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
-      err.email = "Invalid email format";
-    }
+    if (!form.email) err.email = "Email required";
+    if (!form.password) err.password = "Password required";
 
-    if (!form.password) {
-      err.password = "Password is required";
-    } else if (form.password.length < 6) {
-      err.password = "Minimum 6 characters";
-    }
-
-    return err;
+    setErrors(err);
+    return Object.keys(err).length === 0;
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    console.log("Login clicked");
+    if (!validate()) return;
 
-    const res = await API.post("/auth/login", form);
+    const res = await dispatch(
+      loginUser({
+        email: form.email,
+        password: form.password,
+      })
+    );
 
-    console.log("Login success", res.data);
+    console.log("FULL RESPONSE 👉", res);
 
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
+    if (res.meta.requestStatus !== "fulfilled") {
+      console.error("Login failed:", res.payload);
+      return;
+    }
 
-    navigate("/dashboard"); 
+    const role = res.payload?.user?.role;
 
-  } catch (err) {
-    console.log(err.response?.data);
-    alert("Login failed");
-  }
-};
+    switch (role) {
+      case "superadmin":
+      case "companyadmin":
+      case "sales":
+      case "productionmanager":
+      case "operator":
+      case "accountant":
+        navigate("/admin/dashboard");
+        break;
+
+      default:
+        navigate("/user/dashboard");
+    }
+  };
+
+  useEffect(() => {
+    if (user && location.pathname === "/login") {
+      switch (user.role) {
+        case "superadmin":
+        case "companyadmin":
+        case "sales":
+        case "productionmanager":
+        case "operator":
+        case "accountant":
+          navigate("/admin/dashboard");
+          break;
+
+        default:
+          navigate("/user/dashboard");
+      }
+    }
+  }, [user, location.pathname, navigate]);
+
   return (
-    <div className="flex justify-center items-center h-screen">
-      <form className="card" onSubmit={handleSubmit}>
-
-        <h2 className="text-xl mb-5 text-center">Login</h2>
-
-    
-        <div className="input-group">
-          <input
-            type="text"
-            placeholder=" "
-            className="input-field"
-            onChange={(e)=>setForm({...form,email:e.target.value})}
-          />
-          <label className="input-label">Email</label>
-          <p className="error">{errors.email}</p>
-        </div>
-
-       
-        <div className="input-group">
-          <input
-            type="password"
-            placeholder=" "
-            className="input-field"
-            onChange={(e)=>setForm({...form,password:e.target.value})}
-          />
-          <label className="input-label">Password</label>
-          <p className="error">{errors.password}</p>
-        </div>
-
-        <button className="btn">Login</button>
-
-        <p className="text-center mt-3 text-sm">
-          <Link to="/register">Register</Link>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-600">
+      <div className="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
+          Welcome Back
+        </h2>
+        <p className="text-center text-gray-500 mb-6">
+          Login to your account
         </p>
 
-      </form>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-600 px-3 py-2 rounded mb-4 text-sm">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="text-sm text-gray-600">Email</label>
+            <input
+              type="email"
+              placeholder="Enter email"
+              className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-indigo-400"
+              onChange={(e) =>
+                setForm({ ...form, email: e.target.value })
+              }
+            />
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.email}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className="text-sm text-gray-600">Password</label>
+            <input
+              type="password"
+              placeholder="Enter password"
+              className="w-full mt-1 p-3 border rounded-lg focus:ring-2 focus:ring-indigo-400"
+              onChange={(e) =>
+                setForm({ ...form, password: e.target.value })
+              }
+            />
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.password}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition shadow-md"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+
+        <p className="text-center text-sm text-gray-600 mt-6">
+          Don't have an account?{" "}
+          <span
+            className="text-indigo-600 font-semibold cursor-pointer hover:underline"
+            onClick={() => navigate("/register")}
+          >
+            Register
+          </span>
+        </p>
+      </div>
     </div>
   );
-}
+};
+
+export default Login;

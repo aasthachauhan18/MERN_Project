@@ -1,36 +1,36 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-
-    password: {
-      type: String,
-      required: true,
-    },
-
-    role: {
-      type: String,
-      enum: [
-        "super_admin",
-        "company_admin",
-        "sales",
-        "production",
-        "accountant",
-      ],
-      default: "sales",
-    },
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  password: String,
+  role: {
+    type: String,
+    enum: [
+      "superadmin",
+      "companyadmin",
+      "sales",
+      "productionmanager",
+      "operator",
+      "accountant",
+      "user",
+    ],
+    default: "user",
   },
-  { timestamps: true }
-);
+  branch: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Branch",
+  },
+  menuAccess: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Menu",
+  }
+]
+//   roleRef: {
+//   type: mongoose.Schema.Types.ObjectId,
+//   ref: "Role",
+// },
+});
 
 export default mongoose.model("User", userSchema);

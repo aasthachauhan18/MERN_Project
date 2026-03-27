@@ -1,78 +1,84 @@
+import { useDispatch } from "react-redux";
+import { logout } from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
+import { useEffect } from "react";
 
 export default function Dashboard() {
-    const navigate = useNavigate()
-  let user = null;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-try {
-  user = JSON.parse(localStorage.getItem("user"));
-} catch (err) {
-  user = null;
-}
+  const user = JSON.parse(localStorage.getItem("user"));
 
-const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-   
+  const handleLogout = () => {
+    dispatch(logout());
     navigate("/");
   };
+
+  useEffect(() =>{
+    const token = localStorage.getItem("token");
+
+    if(!token){
+      navigate("/");
+    }
+  },[]);
+
+ 
+
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+    <div className="flex">
 
-      <Sidebar />
+      {/* Sidebar */}
+      <div className="w-64 bg-gray-900 text-white min-h-screen p-5">
 
-      
+        <h2 className="text-xl font-bold mb-6 text-indigo-400">
+          Print SaaS
+        </h2>
+
+        <p className="mb-4 text-gray-300">Dashboard</p>
+
+      </div>
+
+      {/* Main */}
       <div className="flex-1 p-6">
 
-     
-        <div className="bg-white rounded-xl shadow-sm px-6 py-4 flex justify-between items-center mb-6">
-          <h1 className="text-xl font-semibold text-gray-800">
-            Dashboard
+        {/* Navbar */}
+        <div className="bg-white p-4 rounded-xl shadow flex justify-between items-center mb-6">
+
+          <h1 className="text-lg font-semibold">
+            Super Admin Dashboard
           </h1>
 
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600">
-              {user?.role}
-            </span>
-            <button onClick={logout} className="bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-600">
-              Logout
-            </button>
-          </div>
-        </div>
-
-       
-        <div className="grid grid-cols-3 gap-6 mb-6">
-
-          <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-600">
-            <h3 className="text-gray-500 text-sm">Total Orders</h3>
-            <p className="text-2xl font-bold text-gray-800 mt-2">120</p>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-indigo-600">
-            <h3 className="text-gray-500 text-sm">Quotations</h3>
-            <p className="text-2xl font-bold text-gray-800 mt-2">80</p>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-orange-500">
-            <h3 className="text-gray-500 text-sm">Revenue</h3>
-            <p className="text-2xl font-bold text-gray-800 mt-2">₹50,000</p>
-          </div>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+          >
+            Logout
+          </button>
 
         </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-700 mb-4">
-            Monthly Performance
-          </h2>
+        {/* Cards */}
+        <div className="grid grid-cols-3 gap-6">
 
-          <div className="h-40 flex items-center justify-center text-gray-400">
-             Chart Coming Here
+          <div className="bg-white p-5 rounded-xl shadow border-l-4 border-indigo-600">
+            <h3>Total Users</h3>
+            <p className="text-2xl font-bold mt-2">120</p>
           </div>
+
+          <div className="bg-white p-5 rounded-xl shadow border-l-4 border-blue-500">
+            <h3>Orders</h3>
+            <p className="text-2xl font-bold mt-2">80</p>
+          </div>
+
+          <div className="bg-white p-5 rounded-xl shadow border-l-4 border-green-500">
+            <h3>Revenue</h3>
+            <p className="text-2xl font-bold mt-2">₹50,000</p>
+          </div>
+
         </div>
 
       </div>
+
     </div>
   );
 }

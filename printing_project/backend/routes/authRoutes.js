@@ -1,7 +1,7 @@
 import express from "express";
 import {
-  registerUser,
-  loginUser,
+  register,
+  login,
   getProfile,
 } from "../controllers/authController.js";
 
@@ -10,8 +10,8 @@ import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 // PUBLIC
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+router.post("/register", register);
+router.post("/login", login);
 
 // PRIVATE
 router.get("/profile", protect, getProfile);
